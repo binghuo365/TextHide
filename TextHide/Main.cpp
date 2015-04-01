@@ -41,11 +41,12 @@ struct Pos
 
 vector< vector<Syword> > dictwords;								//长度为2的同义词组	
 map< string, Syword>	dictMap;
-std::vector<bool> source_binary;								//要加密的二进制
-int transx0;
-int transx1;
-int transy0;
-int transy1;
+std::vector<bool> source_binary;										//要加密的二进制
+
+int transx0;																		//x中0->1的翻转次数
+int transx1;																		//x中1->0的翻转次数
+int transy0;																		//Y中0->1的翻转次数
+int transy1;																		//Y中1->0的翻转次数
 
 //打印用的
 void writeCode(std::vector<bool>& x)
@@ -76,7 +77,7 @@ std::string transforXxYyCode(std::vector< std::vector<bool> >& xx)
 		str = str + temp + ":";
 		std::string st;
 		char t[256];
-		sprintf(t,"%d",xx[i].size());
+		sprintf_s(t,"%d",xx[i].size());
 		st =t;
 		str = str + st + "  ";
 	}
@@ -190,7 +191,7 @@ void LoadBindary(std::string fileName)
 	fin3.close();
 }
 
-//字符分割 不用去理解  就是把 文章一个单词一个单词分开存数组用的
+//字符分割
 void str_split_ex(std::vector<std::string>& pvectorstr, const char * const pstr, const char * chEx)
 {
 	if (0 == pstr)
@@ -687,7 +688,7 @@ void restoreWord(std::vector<bool>& old,
 	std::string strname;
 	char t[256];
 	std::string ts;
-	sprintf(t, "%d", zu);
+	sprintf_s(t, "%d", zu);
 	ts = t;
 	strname = "结果//after" + ts + "_" + fileName;
 	ofstream outfile(strname.c_str());
@@ -833,8 +834,8 @@ int main()
 		{
 			process(Xx, Yy, X, Y);
 		}
-		log<< endl;
 
+		log<< endl;
 		
 		log << "翻转后X编码为:"<< transforCode(X) << endl;
 		log << "翻转后Xx编码:"<< transforXxYyCode(Xx) << endl;
@@ -843,7 +844,6 @@ int main()
 		log<< "X中0翻转"<<transx0 << "次" <<endl;
 		log<< "X中1翻转"<<transx1 << "次" <<endl;
 		log<<"X中共翻转" << transx0 + transx1 << "次"<<endl;
-
 		log<< endl;
 
 		log << "翻转后Y编码为:"<< transforCode(Y) << endl;
@@ -859,14 +859,13 @@ int main()
 		log<< "翻转前X中0的个数占X的比列 :" << (double)getcodenum(oldX,false) / X.size()<< endl;
 		log<< "翻转前Y中1的个数占X的比列 :" << (double)getcodenum(oldY,true) / Y.size()<<endl;
 		log<< "翻转前Y中0的个数占X的比列 :" << (double)getcodenum(oldY,false) / Y.size()<<endl;
-
-			log<< endl;
+		log<< endl;
 		
 		log << "翻转前X与Y中1的个数合计:" << getcodenum(oldX, true) + getcodenum(oldY, true) << endl;
 		log << "翻转前X与Y中0的个数合计:" << getcodenum(oldX, false) + getcodenum(oldY, false) << endl;
 		log << "翻转前X与Y中1占总数的比列:" << double(getcodenum(oldX, true) + getcodenum(oldY, true))/ (X.size() + Y.size()) << endl;
 		log << "翻转前X与Y中0占总数的比列:" << double(getcodenum(oldX, false) + getcodenum(oldY, false))/ (X.size() + Y.size()) << endl;
-			log<< endl;
+		log<< endl;
 		
 		log << "翻转后X中1的个数占X的比列:"<< double(getcodenum(X, true))/X.size()<<endl;
 		log<< "翻转后X中0的个数占X的比列 :" << (double)getcodenum(X,false) / X.size()<< endl;
@@ -878,7 +877,7 @@ int main()
 		log << "翻转后X与Y中0的个数合计:" << getcodenum(X, false) + getcodenum(Y, false) << endl;
 		log << "翻转后X与Y中1占总数的比列:" << double(getcodenum(X, true) + getcodenum(Y, true))/ (X.size() + Y.size()) << endl;
 		log << "翻转后X与Y中0占总数的比列:" << double(getcodenum(X, false) + getcodenum(Y, false))/ (X.size() + Y.size()) << endl;
-			log<< endl;
+		log<< endl;
 		
 		log << "X总共翻转" << transx0 +transx1 << "次"<<endl;
 		log << "Y总共翻转" << transy0 +transy1 << "次"<<endl;
@@ -886,32 +885,6 @@ int main()
 		log << "嵌入效率：" << double(source_binary.size())/(transx0+ transx1 + transy0 +transy1)<<endl;
 		log << "嵌入率："<< double(source_binary.size())/(X.size() + Y.size())<<endl;
 
-		//统计信息
-		//下面注释的在对应文本中显示不显示是哪两个文本时一组的
-		/*  
-		     res1 << "文件X：" << files[xi] << endl;
-		     res1 << "文件Y：" << files[j] << endl;
-		*/
-
-
-		/*
-		res1 << "翻转前X与Y中1占总数的比例:"<<double(getcodenum(oldX, true) + getcodenum(oldY, true))/ (X.size() + Y.size()) << endl;
-		res2 << "翻转前X与Y中0占总数的比列:" << double(getcodenum(oldX, false) + getcodenum(oldY, false))/ (X.size() + Y.size()) << endl;
-		res3 << "翻转前X中1的个数占X的比列 :" << (double)getcodenum(oldX,true) / X.size()<<endl;
-		res4 <<	"翻转前Y中1的个数占Y的比列 :" << (double)getcodenum(oldY,true) / Y.size()<<endl;
-		res5 <<	"翻转前X中0的个数占X的比列 :" << (double)getcodenum(oldX,false) / X.size()<< endl;
-		res6 <<	"翻转前Y中0的个数占Y的比列 :" << (double)getcodenum(oldY,false) / Y.size()<<endl;
-		res7 <<	"翻转后X与Y中1占总数的比列:" << double(getcodenum(X, true) + getcodenum(Y, true))/ (X.size() + Y.size()) << endl;
-		res8 << "翻转后X与Y中0占总数的比列:" << double(getcodenum(X, false) + getcodenum(Y, false))/ (X.size() + Y.size()) << endl;
-		res9 << "翻转后X中1的个数占X的比列 :" << (double)getcodenum(X,true) / X.size()<<endl;
-		res10 << "翻转后Y中1的个数占Y的比列 :" << (double)getcodenum(Y,true) / Y.size()<<endl;
-		res11 << "翻转后X中0的个数占X的比列 :" << (double)getcodenum(X,false) / X.size()<< endl;
-		res12 << "翻转后Y中0的个数占Y的比列 :" << (double)getcodenum(Y,false) / Y.size()<<endl;
-		res13<<  "嵌入效率：" << double(source_binary.size())/(transx0+ transx1 + transy0 +transy1)<<endl;
-		res14<<  "嵌入率："<< double(source_binary.size())/(X.size() + Y.size())<<endl;
-	
-		说明：此处于下面不同的仅仅是在文本中不输出‘翻转前X与Y中1占总数的比例’之类的汉字，而是直接输出数据；
-		*/
 		res1 <<double(getcodenum(oldX, true) + getcodenum(oldY, true))/ (X.size() + Y.size()) << endl;
 		res2 << double(getcodenum(oldX, false) + getcodenum(oldY, false))/ (X.size() + Y.size()) << endl;
 		res3 << (double)getcodenum(oldX,true) / X.size()<<endl;
@@ -948,8 +921,6 @@ int main()
 		res12.close();
 		res13.close();
 		res14.close();
-		
-
 
 	system("pause");
 	return 0;
